@@ -10,8 +10,7 @@ const rootReducer = combineReducers({
 })
 
 const store = configureStore({
-	// reducer : rootReducer,
-	reducer: {},
+	reducer : rootReducer,
 	middleware:  (getDefaultMiddleware) => getDefaultMiddleware().prepend(thunk),
 })
 console.log(store)
