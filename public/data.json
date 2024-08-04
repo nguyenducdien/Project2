@@ -1,0 +1,111 @@
+{
+    "auth": {
+      "email": "admin@gmail.com",
+      "password": "12345678a"
+    },
+    "categories": [
+      {
+        "id": "1",
+        "name": "cloth"
+      },
+      {
+        "id": "2",
+        "name": "Bag"
+      },
+      {
+        "id": "3",
+        "name": "Accessory"
+      },
+      {
+        "id": "4",
+        "name": "Accessory 2"
+      }
+    ],
+    "colors": [
+      {
+        "id": "5",
+        "name": "blue"
+      },
+      {
+        "id": "82b1",
+        "name": "Yelllow"
+      },
+      {
+        "id": "e9ed",
+        "name": "Black"
+      },
+      {
+        "id": "d45d",
+        "name": "Gray"
+      }
+    ],
+    "products": [
+      {
+        "name": "Trouser with tie 2222",
+        "available": 1,
+        "price": "452000",
+        "colorIds": [
+          1,
+          4,
+          5,
+          6
+        ],
+        "categoryId": 1,
+        "sold": 0,
+        "id": "2"
+      },
+      {
+        "name": "Backpack Elsassss",
+        "available": 1,
+        "price": 370000,
+        "colorIds": [
+          4,
+          6
+        ],
+        "categoryId": 1,
+        "sold": 0,
+        "id": "3"
+      },
+      {
+        "id": "9460",
+        "name": "2343   ",
+        "available": 1,
+        "price": "50000324",
+        "colorIds": [
+          2,
+          6
+        ],
+        "categoryId": 3,
+        "sold": 0
+      },
+      {
+        "id": "1002",
+        "name": "3243",
+        "available": "1324",
+        "price": 50000,
+        "colorIds": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "categoryId": 3,
+        "sold": 0
+      },
+      {
+        "id": "4009",
+        "name": "Test 2222",
+        "available": "10",
+        "price": "55000",
+        "colorIds": [
+          4
+        ],
+        "categoryId": 3,
+        "sold": 0
+      }
+    ]
+  }
