@@ -1,59 +1,74 @@
 import React, { useRef, useState, useCallback, useEffect, useMemo, memo } from 'react';
 import InputText from './InputLogin';
-import { loginValidation } from '../FormRex';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthAction } from '../store/reducers/actions';
-//import './styles.css';
-import store from '../store';
-console.log(store)
-const LoginForm = () => {
-  const [errors, setErrors] = useState({ username: '', password: '' });
 
-  
+import store, { AppDispatch } from '../store';
+import { fetchAuth } from '../store/reducers/authReducer';
+import { loginValidation } from '../FormRex';
+import Button from '@mui/material/Button';
+
+
+//import { RootState } from '../store';
+
+
+const LoginForm: React.FC = () => {
+  const [errors, setErrors] = useState({ email: '', password: '' });
   const auth = useSelector((state: any) => state.auth);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  
-  const usernameRef = useRef<HTMLInputElement>(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-  console.log('form login ');
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    const usernameValue = usernameRef.current?.value || '';
-    const passwordValue = passwordRef.current?.value || '';
-    let newErrors = loginValidation(usernameValue, passwordValue);
-    setErrors(newErrors);
 
-    if (!newErrors.username && !newErrors.password) {
-      console.log('Form submitted:', {
-        username: usernameValue,
-        password: passwordValue,
-      });
-      dispatch({
-        type: AuthAction.LOGIN,
-        data: {
-          username: usernameValue,
-          password: passwordValue,
-        },
-      });
-      navigate('/');
-    }
-  }, []); //
 
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+        e.preventDefault();
+        const emailValue = emailRef.current?.value || '';
+        const passwordValue = passwordRef.current?.value || '';
+
+        if (!emailValue || !passwordValue) {
+            setErrors({
+                email: !emailValue ? 'Email is required' : '',
+                password: !passwordValue ? 'Password is required' : '',
+            });
+            return;
+        }
+
+
+      dispatch(fetchAuth({ username: emailValue, password: passwordValue }))
+            .then(() => {
+              navigate('/Product');
+            })
+            .catch((error) => {
+              setErrors({ email: '', password: 'email or password is not correct' });
+            });
+    },
+    [dispatch, navigate]
+
+
+);
   return (
-    <form className='form' onSubmit={handleSubmit}>
-      <InputText label='Email' ref={usernameRef} error={errors.username} />
-      <InputText
-        label='Password'
-        type='password'
-        ref={passwordRef}
-        error={errors.password}
-      />
-
-      <button className='submit-btn' type='submit'>
-        Login
+    <form className="form" onSubmit={handleSubmit}>
+      <div>
+        <label>Email</label>
+        <input ref={emailRef} type="text" />
+        {errors.email && <span>{errors.email}</span>}
+      </div>
+      <div>
+        <label>Password</label>
+        <input ref={passwordRef} type="password" />
+        {errors.password && <span>{errors.password}</span>}
+      </div>
+      <button type="submit" disabled={auth.loading === 'pending'}>
+        {auth.loading === 'pending' ? 'Logging in...' : 'Login'}
       </button>
+      {auth.error && <span>{auth.error}</span>}
     </form>
   );
 };

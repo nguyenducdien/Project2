@@ -1,6 +1,8 @@
-// src/App.tsx
-import React, { useEffect, useState } from 'react';
 
+
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCategories,fetchColors,fetchProducts } from '../../store/reducers/productsReducer';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,125 +11,87 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { AppDispatch } from '../../store';
 
+const ProductTable: React.FC = () => {
+  const dispatch = useDispatch();
 
-interface Color {
-    id: string;
-    name: string;
-  }
-interface Category {
-    id: string;
-    name: string;
-  }
-interface Product {
-  id: string;
-  name: string;
-  available: number | string;
-  price: number | string;
-  colorIds: number[];
-  categoryId: number;
-  sold: number;
-}
+  const products = useSelector((state: any) => state.product.products);
+  const categories = useSelector((state: any) => state.product.categories);
+  const colors = useSelector((state: any) => state.product.colors);
 
-const Product: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [colors, setColors] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+ /* useEffect(() => {
+    dispatch(fetchProducts());
+    dispatch(fetchCategories());
+    dispatch(fetchColors());
+  }, [dispatch]);*/
 
-  useEffect(() => {
-    fetch('/data.json')
-      .then((response) => response.json())
-      .then((data) => {
-        setProducts(data.products);
-        setColors(data.colors);
-        setCategories(data.categories);
-      })
-      .catch((error) => console.error('Error fetching data:', error));
-  }, []);
   const getColorNames = (colorIds: number[]) => {
-    if(!colors.length) return "Unknown"
-    console.log(colors)
-    console.log("color ID",colorIds)
-    return colorIds.map((colorId) => {
-    const color = colors.find((c) => parseInt(c.id) === colorId);
-      console.log("color",color)
+    return colorIds.map((id) => {
+      const color = colors.find((c: any) => parseInt(c.id) === id);
       return color ? color.name : '';
-    }).join('');
+    }).join(' ');
   };
+  
+
   const getCategoryName = (categoryId: number) => {
-    const category = categories.find((c) => parseInt(c.id) === categoryId);
-    return category ? category.name : '0';
+    const category = categories.find((c: any) => parseInt(c.id) === categoryId);
+    return category ? category.name : '';
   };
 
-  //const totalsp= products.reduce((total, product)=> total + )
-  const totalAvali= products.reduce((total, product)=> total + Number(product.available), 0)
-  const totalSold= products.reduce((total, product)=> total + product.sold, 0)
-  const total= totalAvali+totalSold;
+  const totalAvailable = products.reduce((sum: number, p: any) => sum + Number(p.available), 0);
+  const totalSold = products.reduce((sum: number, p: any) => sum + p.sold, 0);
+  const totalRevenue = products.reduce((sum: number, p: any) => sum + (Number(p.price) * p.available), 0);
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="spanning table">
+      <Table aria-label="simple table">
         <TableHead>
-          
           <TableRow>
+            <TableCell>No</TableCell>
             <TableCell>Name</TableCell>
-            <TableCell align="right">Available</TableCell>
-            <TableCell align="right">Soil</TableCell>   
-            <TableCell align="right">Category</TableCell>
-            <TableCell align="right">Color</TableCell>
-            <TableCell align="right">Price</TableCell>
-            <TableCell align="right"></TableCell>
+            <TableCell>Available</TableCell>
+            <TableCell>Sold</TableCell>
+            <TableCell>Category</TableCell>
+            <TableCell>Color</TableCell>
+            <TableCell>Price</TableCell>
+            <TableCell align="center">Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {products.map((product) => (
+          {products.map((product: any, index: number) => (
             <TableRow key={product.id}>
+              <TableCell>{index + 1}</TableCell>
               <TableCell>{product.name}</TableCell>
-              <TableCell align="right">{product.available}</TableCell>
-              <TableCell align="right">{product.sold}</TableCell>
-              <TableCell align="right">{getCategoryName(product.categoryId)}</TableCell>
-              <TableCell align="right">{getColorNames(product.colorIds)}</TableCell>
-              <TableCell align="right">{product.price}</TableCell>
-              <TableCell align="right">
-              <IconButton aria-label="Edit">
-                <EditIcon />
+              <TableCell>{product.available}</TableCell>
+              <TableCell>{product.sold}</TableCell>
+              <TableCell>{getCategoryName(product.categoryId)}</TableCell>
+              <TableCell>{getColorNames(product.colorIds)}</TableCell>
+              <TableCell>{Number(product.price).toLocaleString()}</TableCell>
+              <TableCell align="center">
+                <IconButton color="primary">
+                  <EditIcon />
                 </IconButton>
-                <IconButton aria-label="delete">
-                <DeleteIcon />
+                <IconButton color="secondary">
+                  <DeleteIcon />
                 </IconButton>
               </TableCell>
-             
             </TableRow>
-
-       
           ))}
-        
-              <TableRow >
-              <TableCell rowSpan={4} />
-              <TableCell colSpan={2}>Total</TableCell>
-              <TableCell align="right">{total}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell colSpan={2}>Available</TableCell>
-              <TableCell align="right">{totalAvali}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell colSpan={2}>Sold</TableCell>
-              <TableCell align="right">{totalSold}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell colSpan={2}>Revenue</TableCell>
-              <TableCell align="right">{}</TableCell>
-            </TableRow>
-        
-        
+          <TableRow>
+            <TableCell colSpan={2}><strong>Total:</strong></TableCell>
+            <TableCell><strong>{totalAvailable}</strong></TableCell>
+            <TableCell><strong>{totalSold}</strong></TableCell>
+            <TableCell colSpan={2}></TableCell>
+            <TableCell><strong>{totalRevenue.toLocaleString()}</strong></TableCell>
+          </TableRow>
         </TableBody>
       </Table>
     </TableContainer>
   );
 };
 
-export default Product;
+export default ProductTable;
+

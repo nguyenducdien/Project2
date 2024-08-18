@@ -9,20 +9,27 @@ const Tabs = () => {
 
   const handleClick = useCallback((index: number) => {
     setActive(index);
+   
   }, []);
 
   return (
     <div>
       {[TABS_NUMBER.Product, TABS_NUMBER.Categories, TABS_NUMBER.Color].map(
-        (num, index) => (
+        (num) => (
           <Link
-            key={index}
-            to={`/${num === TABS_NUMBER.Product ? '' : TABS_NAME[num]}`}
+            key={num}
+            to={`/${num === TABS_NUMBER.Product ? 'Product' : TABS_NAME[num]}`}
             style={{
-              backgroundColor: active === index ? 'lightblue' : 'white',
-              fontSize: '50px',
+              backgroundColor: active === num ? 'lightblue' : 'white',
+              fontSize: '25px',
+              border : '2px solid purple',
+              borderRadius:'5px',
+              margin: '5px',
+              padding :'5px',
+              textDecoration:'none'
+
             }}
-            onClick={() => handleClick(index)}>
+            onClick={() => handleClick(num)}>
             {TABS_NAME[num]}
           </Link>
         )

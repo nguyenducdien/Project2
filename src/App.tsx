@@ -7,8 +7,11 @@ import store from './store/index';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root from './pages/Root';
 //import data from './data.json'
-import Product from './pages/product/product';
+import ProductTable from './pages/product/product';
 import TransitionsSnackbar from './compoments/Nabar';
+import path from 'path';
+import CategoriesTable from './pages/Categories';
+import Color from './pages/Color';
 
 
 const router =createBrowserRouter([
@@ -17,9 +20,18 @@ const router =createBrowserRouter([
     element: <Root />,
     children:[
       {
-        path: '/seller/products',
-        element: <Product />,
+        path:'/Product',
+        element: <ProductTable />
+      },
+      {
+        path:'/Categories',
+        element: <CategoriesTable/>
+      },
+      {
+        path:'/Color',
+       element : <Color/>
       }
+      
     ]
   },
   {
